@@ -1,6 +1,11 @@
 <header>
   <h1>Trabalho 1</h1>
-  <button mat-raised-button color="primary" (click)="execute()">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="execute()"
+    [disabled]="form.get('gramatic').errors"
+  >
     <mat-icon>play_arrow</mat-icon>
     Executar
   </button>
@@ -19,6 +24,10 @@
         formControlName="gramatic"
       >
       </textarea>
+
+      <mat-error *ngIf="form.get('gramatic').errors; let type">
+        {{ type.required ? "Campo obrigatório!" : "Sintaxe inválida!" }}
+      </mat-error>
     </mat-form-field>
   </div>
 </section>

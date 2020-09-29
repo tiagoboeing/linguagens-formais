@@ -1,5 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 // https://regex101.com/r/FAUDYV/3/
 const separeAttribution = new RegExp(/^([A-Z]{1})(\s*=\s*)([a-zA-Z].*)$/);
@@ -8,6 +14,7 @@ const separeAttribution = new RegExp(/^([A-Z]{1})(\s*=\s*)([a-zA-Z].*)$/);
   selector: 'test1',
   templateUrl: './test1.component.html',
   styleUrls: ['./test1.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Test1Component implements OnInit {
   gramatic: string;
@@ -28,16 +35,18 @@ C=ss|a`;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      gramatic: this.fb.control(this.defaultValue),
+      gramatic: this.fb.control(
+        this.defaultValue,
+        [Validators.required],
+        [this.verifyGramatic()]
+      ),
     });
   }
 
   ngOnInit(): void {}
 
   execute(): void {
-    this.clearTokens();
     this.handleGramatic(this.form.get('gramatic').value);
-    this.verifyGramatic(this.handleGramatic(this.form.get('gramatic').value));
   }
 
   splitLines(gramatic: string): string[] {
@@ -48,43 +57,61 @@ C=ss|a`;
     return separeAttribution.exec(line);
   }
 
-  handleGramatic(gramatic: string): ListTokens | null {
+  /**
+   * Receive a gramatic and verify if is valid
+   * @param gramatic your gramatic
+   * @example
+   * S = aaB | baaA
+   * A = bB | S...
+   * @returns if gramatic is valid
+   */
+  handleGramatic(gramatic: string): boolean {
     const lines = this.splitLines(gramatic);
-    const parsed = lines.map((line) => {
-      const extractParts = this.extractSentenceParts(line);
 
-      if (extractParts) {
-        const allSentence = extractParts[0];
-        const token = extractParts[1];
-        const sentences = this.sanitizeSentences(extractParts[3].split('|'));
+    console.log(lines);
 
-        const currentToken: ListTokens = {
-          [token]: {
-            allSentence,
-            sentences,
-          },
-        };
+    return lines
+      .map((line: string) => {
+        const extractParts = this.extractSentenceParts(line);
 
-        this.tokens = {
-          ...this.tokens,
-          ...currentToken,
-        };
+        if (extractParts?.length) {
+          const allSentence = extractParts[0];
+          const token = extractParts[1];
+          const sentences = this.sanitizeSentences(extractParts[3].split('|'));
 
-        return currentToken;
-      }
-    });
+          return {
+            [token]: {
+              allSentence,
+              sentences,
+            },
+          } as ListTokens;
+        }
+      })
+      .every((item) => {
+        if (item) {
+          const key = Object.keys(item)[0];
+          const hasUniqueKey = Object.keys(this.tokens).indexOf(key) === -1;
 
-    parsed.map((el) => el[0]).forEach((item) => console.log(item));
-    console.log(parsed);
+          this.tokens = {
+            ...this.tokens,
+            ...item,
+          };
+
+          return hasUniqueKey;
+        }
+      });
   }
 
-  verifyGramatic(tokens: ListTokens): boolean {
-    console.log(tokens);
-    tokens.filter((item, index) => {
-      console.log(item);
-    });
+  verifyGramatic(): AsyncValidatorFn {
+    return async (
+      ctrl: AbstractControl
+    ): Promise<{ [key: string]: any } | null> => {
+      this.clearTokens();
+      if (this.handleGramatic(ctrl.value)) return null;
 
-    return true;
+      ctrl.markAsTouched();
+      return { gramatic: { valid: false } };
+    };
   }
 
   sanitizeSentences(sentences: string[]): string[] {
