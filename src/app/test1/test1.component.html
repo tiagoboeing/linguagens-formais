@@ -1,0 +1,30 @@
+<header>
+  <h1>Trabalho 1</h1>
+  <button mat-raised-button color="primary" (click)="execute()">
+    <mat-icon>play_arrow</mat-icon>
+    Executar
+  </button>
+</header>
+
+<section id="gramatic" [formGroup]="form">
+  <div>
+    <h2>Defina a gramática</h2>
+    <mat-form-field style="width: 100%">
+      <textarea
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="4"
+        cdkAutosizeMaxRows="10"
+        matInput
+        placeholder="Exemplo: S=aaB|bA"
+        formControlName="gramatic"
+      >
+      </textarea>
+    </mat-form-field>
+  </div>
+</section>
+
+<section id="output">
+  <div>
+    <h2>Saída</h2>
+  </div>
+</section>
