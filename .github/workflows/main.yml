@@ -33,4 +33,5 @@ jobs:
           deploy_branch: master
           angular_dist_build_folder: dist
           run_lint: npm run lint
+          base_href: linguagens-formais/
           skip_failure: false
