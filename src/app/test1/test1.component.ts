@@ -6,9 +6,13 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // https://regex101.com/r/FAUDYV/3/
 const separeAttribution = new RegExp(/^([A-Z]{1})(\s*=\s*)([a-zA-Z].*)$/);
+const syntaxPattern = new RegExp(
+  /^[A-Z]\s*\=\s*[A-Za-z| ]*[^|.+-/$%#@!*,;'`"\[\]{}^&()=_0-9]$/gm
+);
 
 @Component({
   selector: 'test1',
@@ -18,11 +22,10 @@ const separeAttribution = new RegExp(/^([A-Z]{1})(\s*=\s*)([a-zA-Z].*)$/);
 })
 export class Test1Component implements OnInit {
   private internalStack: string[] = [];
+  private tokens: ListTokens;
 
   gramatic: string;
-  tokens: ListTokens;
   form: FormGroup;
-  startsWith: string;
   callStack: string[];
 
   // TODO: remover isso
@@ -31,8 +34,9 @@ A = aaB | ab
 B =asd|asda
 C = aaS |c`;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private toastr: MatSnackBar) {
     this.form = this.fb.group({
+      startsWith: this.fb.control('', [Validators.required]),
       gramatic: this.fb.control(
         this.defaultValue,
         [Validators.required],
@@ -48,7 +52,28 @@ C = aaS |c`;
   }
 
   execute(): void {
-    this.handleGramatic(this.form.get('gramatic').value);
+    if (this.form.valid) {
+      this.handleGramatic(this.form.get('gramatic').value);
+      this.deriveSentences(this.form.get('startsWith').value);
+    } else {
+      this.form.markAllAsTouched();
+      this.toastr.open('Formulário inválido, verifique os campos!', 'Fechar', {
+        verticalPosition: 'top',
+        horizontalPosition: 'right',
+        duration: 5000,
+      });
+    }
+  }
+
+  deriveSentences(startsOn: string) {
+    console.log(this.tokens[startsOn].sentences);
+    // console.log(this.sortSentence(this.tokens[startsOn].sentences));
+  }
+
+  sortSentence(sentences: string[]) {
+    const length = sentences.length;
+    const sort = Math.floor(Math.random() * length);
+    return sentences[sort];
   }
 
   splitLines(gramatic: string): string[] {
@@ -60,17 +85,17 @@ C = aaS |c`;
   }
 
   /**
-   * Receive a gramatic and verify if is valid
+   * Receive a gramatic, extract and parse tokens
+   * @description
+   * Use with `checkSyntax()` to verify all semantic
    * @param gramatic your gramatic
    * @example
    * S = aaB | baaA
    * A = bB | S...
-   * @returns if gramatic is valid
+   * @returns if gramatic have unique tokens
    */
   handleGramatic(gramatic: string): boolean {
     const lines = this.splitLines(gramatic);
-
-    console.log(lines);
 
     return lines
       .map((line: string) => {
@@ -111,11 +136,17 @@ C = aaS |c`;
       ctrl: AbstractControl
     ): Promise<{ [key: string]: any } | null> => {
       this.clearTokens();
-      if (this.handleGramatic(ctrl.value)) return null;
+      if (this.handleGramatic(ctrl.value) && this.checkSyntax(ctrl.value))
+        return null;
 
       ctrl.markAsTouched();
       return { gramatic: { valid: false } };
     };
+  }
+
+  checkSyntax(gramatic: string): boolean {
+    const matches = gramatic.match(syntaxPattern);
+    return Object.keys(this.tokens).length === matches.length;
   }
 
   sanitizeSentences(sentences: string[]): string[] {
@@ -125,33 +156,6 @@ C = aaS |c`;
   clearTokens(): void {
     this.tokens = {};
   }
-
-  // extractAfterAttribution(gramatic: string): void {
-  //   let m;
-
-  //   while ((m = separeAttribution.exec(gramatic)) !== null) {
-  //     if (m.index === separeAttribution.lastIndex) {
-  //       separeAttribution.lastIndex++;
-  //     }
-
-  //     // extract tokens
-  //     m.forEach((match, groupIndex) => {
-  //       const sentence: ListTokens = {};
-  //       if (groupIndex === 1) sentence[match] = {};
-  //       if (groupIndex === 0)
-  //         sentence[match] = { ...sentence[match], allSentence: match };
-
-  //       // example: aaA | bbA
-  //       if (groupIndex === 3) {
-  //         sentence[match] = { ...sentence[match], sentences: match };
-  //       }
-
-  //       this.tokens = { ...this.tokens, sentence };
-
-  //       console.log(`Found match, group ${groupIndex}: ${match}`);
-  //     });
-  //   }
-  // }
 }
 
 interface Token {

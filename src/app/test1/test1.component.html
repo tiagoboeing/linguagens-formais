@@ -1,11 +1,6 @@
 <header>
   <h1>Trabalho 1</h1>
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="execute()"
-    [disabled]="form.get('gramatic').errors"
-  >
+  <button mat-raised-button color="primary" (click)="execute()">
     <mat-icon>play_arrow</mat-icon>
     Executar
   </button>
@@ -15,7 +10,7 @@
   <div>
     <mat-form-field appearance="fill" style="width: 100%">
       <mat-label>Defina o ponto de início</mat-label>
-      <mat-select>
+      <mat-select formControlName="startsWith">
         <mat-option *ngFor="let token of listTokens()" [value]="token">
           Iniciando de {{ token }}
         </mat-option>

@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { Test1Component } from './test1/test1.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [AppComponent, Test1Component],
@@ -21,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatButtonModule,
     MatIconModule,
     MatSelectModule,
+    MatSnackBarModule,
     MatToolbarModule,
     ReactiveFormsModule,
   ],
