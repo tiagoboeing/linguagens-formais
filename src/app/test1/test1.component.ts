@@ -65,12 +65,12 @@ C = aaS |c`;
     }
   }
 
-  deriveSentences(startsOn: string) {
+  deriveSentences(startsOn: string): void {
     console.log(this.tokens[startsOn].sentences);
     // console.log(this.sortSentence(this.tokens[startsOn].sentences));
   }
 
-  sortSentence(sentences: string[]) {
+  sortSentence(sentences: string[]): string {
     const length = sentences.length;
     const sort = Math.floor(Math.random() * length);
     return sentences[sort];
@@ -136,8 +136,9 @@ C = aaS |c`;
       ctrl: AbstractControl
     ): Promise<{ [key: string]: any } | null> => {
       this.clearTokens();
-      if (this.handleGramatic(ctrl.value) && this.checkSyntax(ctrl.value))
+      if (this.handleGramatic(ctrl.value) && this.checkSyntax(ctrl.value)) {
         return null;
+      }
 
       ctrl.markAsTouched();
       return { gramatic: { valid: false } };
