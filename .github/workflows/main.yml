@@ -30,7 +30,6 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
           angular_project_dir: ./
           build_configuration: production
-          base_href: /
           deploy_branch: master
           angular_dist_build_folder: dist
           run_lint: npm run lint
