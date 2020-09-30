@@ -13,6 +13,17 @@
 
 <section id="gramatic" [formGroup]="form">
   <div>
+    <mat-form-field appearance="fill" style="width: 100%">
+      <mat-label>Defina o ponto de início</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let token of listTokens()" [value]="token">
+          Iniciando de {{ token }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div>
     <h2>Defina a gramática</h2>
     <mat-form-field style="width: 100%">
       <textarea

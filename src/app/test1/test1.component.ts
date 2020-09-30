@@ -17,21 +17,19 @@ const separeAttribution = new RegExp(/^([A-Z]{1})(\s*=\s*)([a-zA-Z].*)$/);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Test1Component implements OnInit {
+  private internalStack: string[] = [];
+
   gramatic: string;
   tokens: ListTokens;
   form: FormGroup;
+  startsWith: string;
+  callStack: string[];
 
   // TODO: remover isso
-  defaultValue = `S = aaA | bbA
-S = aaA | bbA|ab
-S = aaA | bbA
-A = aaB | S
-B= Aas|ssA
+  defaultValue = `S = aaA | bbA|ab
+A = aaB | ab
 B =asd|asda
-B = s
-C = aaS |c
-C=ss
-C=ss|a`;
+C = aaS |c`;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -44,6 +42,10 @@ C=ss|a`;
   }
 
   ngOnInit(): void {}
+
+  listTokens(): string[] {
+    return Object.keys(this.tokens);
+  }
 
   execute(): void {
     this.handleGramatic(this.form.get('gramatic').value);
@@ -77,7 +79,9 @@ C=ss|a`;
         if (extractParts?.length) {
           const allSentence = extractParts[0];
           const token = extractParts[1];
-          const sentences = this.sanitizeSentences(extractParts[3].split('|'));
+          const sentences = this.sanitizeSentences(
+            extractParts[3].split('|')
+          ).filter((el) => el !== '');
 
           return {
             [token]: {
