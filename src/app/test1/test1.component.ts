@@ -157,7 +157,7 @@ C = aaS |c`;
     this.stats = {
       ...this.stats,
       endDate: new Date(),
-      steps: iteration - 1,
+      steps: iteration,
     };
   }
 
