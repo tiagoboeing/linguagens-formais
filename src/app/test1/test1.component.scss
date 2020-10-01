@@ -10,6 +10,15 @@ header {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  mat-radio-button {
+    margin-right: 25px;
+  }
 }
 
 .row {
@@ -27,9 +36,10 @@ header {
 
 #output {
   margin-top: 25px;
+  word-break: break-all;
+  line-height: 60px;
 
   .result {
-    margin: 35px 0;
     font-size: 40px;
   }
 

@@ -8,12 +8,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Test1Component } from './test1/test1.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   declarations: [AppComponent, Test1Component],
@@ -27,9 +28,11 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatExpansionModule,
     MatGridListModule,
     MatIconModule,
+    MatRadioModule,
     MatSelectModule,
     MatSnackBarModule,
     MatToolbarModule,
+    FormsModule,
     ReactiveFormsModule,
   ],
   providers: [],

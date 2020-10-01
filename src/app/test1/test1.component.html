@@ -1,9 +1,22 @@
 <header>
   <h1>Trabalho 1</h1>
-  <button mat-raised-button color="primary" (click)="execute()">
-    <mat-icon>play_arrow</mat-icon>
-    Executar
-  </button>
+
+  <div>
+    <mat-radio-group
+      aria-label="Select an option"
+      style="margin-right: 25px"
+      (change)="exampleChanges($event)"
+    >
+      <mat-radio-button value="example1" checked>Exemplo 1</mat-radio-button>
+      <mat-radio-button value="example2">Exemplo 2</mat-radio-button>
+      <mat-radio-button value="example3">Exemplo 3</mat-radio-button>
+    </mat-radio-group>
+
+    <button mat-raised-button color="primary" (click)="execute()">
+      <mat-icon>play_arrow</mat-icon>
+      Executar
+    </button>
+  </div>
 </header>
 
 <section id="gramatic" [formGroup]="form">
@@ -57,7 +70,7 @@
               Processamento finalizado em
               {{ getExecutionDuration() }} milisegundos
               <span *ngIf="stats.steps; let steps">
-                em {{ steps }} iterações
+                em {{ steps }} iterações na pilha
               </span>
             </b>
           </div>
@@ -99,7 +112,7 @@
           <div>
             Tempo de execução: {{ getExecutionDuration() }} milisegundos
           </div>
-          <div>{{ stats?.steps }} passos executados</div>
+          <div>{{ stats?.steps }} iterações realizadas na pilha</div>
         </div>
       </mat-expansion-panel>
     </mat-accordion>

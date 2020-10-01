@@ -6,7 +6,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatRadioChange } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { example1, example2, example3 } from './gramatics';
 
 const LIMIT_ITERATIONS = 2000;
 
@@ -30,6 +32,7 @@ export class Test1Component implements OnInit {
   private internalStack: string[] = [];
   private tokens: ListTokens;
 
+  iteration = 0;
   gramatic: string;
   form: FormGroup;
   callStack: {
@@ -42,17 +45,11 @@ export class Test1Component implements OnInit {
   result: string[];
   stats: { startDate?: Date; endDate?: Date; steps?: number };
 
-  // TODO: remover isso
-  defaultValue = `S = aaA | bbA|ab
-A = aaB | ab
-B =ab|abba
-C = aaS |c`;
-
   constructor(private fb: FormBuilder, private toastr: MatSnackBar) {
     this.form = this.fb.group({
       startsWith: this.fb.control('', [Validators.required]),
       gramatic: this.fb.control(
-        this.defaultValue,
+        example1,
         [Validators.required],
         [this.verifyGramatic()]
       ),
@@ -60,6 +57,15 @@ C = aaS |c`;
   }
 
   ngOnInit(): void {}
+
+  exampleChanges({ value }: MatRadioChange) {
+    const exampleSelected = {
+      example1,
+      example2,
+      example3,
+    }[value];
+    this.form.get('gramatic').setValue(exampleSelected);
+  }
 
   listTokens(): string[] {
     return Object.keys(this.tokens);
@@ -114,9 +120,8 @@ C = aaS |c`;
   }
 
   executeInternalStack() {
-    let iteration = 0;
     while (this.internalStack.length !== 0) {
-      if (iteration < LIMIT_ITERATIONS) {
+      if (this.iteration < LIMIT_ITERATIONS) {
         const token = this.internalStack[0];
 
         if (token && token === token.toLocaleLowerCase()) {
@@ -151,13 +156,13 @@ C = aaS |c`;
         console.error(`Iterations limit of ${LIMIT_ITERATIONS} exceeded!`);
       }
 
-      iteration++;
+      this.iteration++;
     }
 
     this.stats = {
       ...this.stats,
       endDate: new Date(),
-      steps: iteration,
+      steps: this.iteration,
     };
   }
 
@@ -250,6 +255,7 @@ C = aaS |c`;
   }
 
   clearStates(): void {
+    this.iteration = 0;
     this.logs = logsInitialState;
     this.stats = {};
     this.internalStack = [];
