@@ -1,27 +1,23 @@
-# LinguagensFormais
+# Linguagens Formais
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.1.3.
+Este é um repositório relacionado a práticas acadêmicas.
 
-## Development server
+## Trabalho 1
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+> [Demonstração](https://tiagoboeing.github.io/linguagens-formais/#/)
 
-## Code scaffolding
+[![](docs/screenshot.png)](https://tiagoboeing.github.io/linguagens-formais/#/)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Implementação da derivação de uma gramática a ser especificada eliminando os símbolos não terminais com a utilização de algoritmos de pilha. Neste cenário, os vetores do JavaScript com auxílio dos métodos `push()` e `shift()`.
 
-## Build
+Símbolos não terminais são representados por letras maiúsculas.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Examplos válidos de gramáticas: 
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- S = aa<ins>**A**</ins> | bb<ins>**A**</ins> | <ins>**C**</ins>
+- A = aa<ins>**B**</ins> | ab
+- B = ab | ab<ins>**B**</ins>
+- C = aa<ins>**S**</ins> |c
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+> Os símbolos não terminais estão destacados na gramática.
