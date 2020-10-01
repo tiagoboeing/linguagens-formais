@@ -58,7 +58,7 @@ export class Test1Component implements OnInit {
 
   ngOnInit(): void {}
 
-  exampleChanges({ value }: MatRadioChange) {
+  exampleChanges({ value }: MatRadioChange): void {
     const exampleSelected = {
       example1,
       example2,
@@ -119,7 +119,7 @@ export class Test1Component implements OnInit {
     }
   }
 
-  executeInternalStack() {
+  executeInternalStack(): void {
     while (this.internalStack.length !== 0) {
       if (this.iteration < LIMIT_ITERATIONS) {
         const token = this.internalStack[0];
@@ -143,7 +143,7 @@ export class Test1Component implements OnInit {
 
           const sentenceTokens = Array.from(sentence);
           if (sentenceTokens.length > 0) {
-            sentenceTokens.forEach((token) => this.internalStack.push(token));
+            sentenceTokens.forEach((el) => this.internalStack.push(el));
           }
           this.callStack.push({ token, index, sentence });
           this.internalStack.shift();
@@ -287,7 +287,9 @@ export class Test1Component implements OnInit {
 
   getExecutionDuration(): number {
     if (this.stats.startDate && this.stats.endDate)
-      return Math.abs(<any>this.stats.endDate - <any>this.stats.startDate);
+      return Math.abs(
+        (this.stats.endDate as any) - (this.stats.startDate as any)
+      );
     return 0;
   }
 }
