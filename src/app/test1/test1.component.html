@@ -28,6 +28,7 @@
         matInput
         placeholder="Exemplo: S=aaB|bA"
         formControlName="gramatic"
+        spellcheck="false"
       >
       </textarea>
 
@@ -41,5 +42,66 @@
 <section id="output">
   <div>
     <h2>Saída</h2>
+
+    <div class="row w-100" style="margin: 20px 0">
+      <div>
+        <mat-card>
+          <div>Gramática resultante</div>
+
+          <div *ngIf="stats?.endDate && result" class="result">
+            {{ getResultantGramatic() }}
+          </div>
+
+          <div>
+            <b *ngIf="stats?.endDate">
+              Processamento finalizado em
+              {{ getExecutionDuration() }} milisegundos
+              <span *ngIf="stats.steps; let steps">
+                em {{ steps }} iterações
+              </span>
+            </b>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <mat-accordion class="headers-align">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Logs de execução</mat-panel-title>
+          <mat-panel-description>
+            Passos executados para derivar a gramática.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div
+          class="logs"
+          [innerHTML]="!stats?.endDate ? 'Execute o processamento! 🙂' : logs"
+        ></div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [disabled]="!stats?.endDate">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Estatísticas</mat-panel-title>
+          <mat-panel-description>
+            Quantidade de passos, tempo de execução e data e hora.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div *ngIf="stats?.endDate">
+          <b>Dados de execução</b>
+          <div>
+            Iniciado às <b>{{ stats?.startDate.toLocaleString("pt-BR") }}</b>
+          </div>
+          <div>
+            Finalizado às <b>{{ stats?.endDate.toLocaleString("pt-BR") }}</b>
+          </div>
+          <div>
+            Tempo de execução: {{ getExecutionDuration() }} milisegundos
+          </div>
+          <div>{{ stats?.steps }} passos executados</div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
 </section>

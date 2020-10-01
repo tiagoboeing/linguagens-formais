@@ -8,11 +8,17 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// https://regex101.com/r/FAUDYV/3/
+const LIMIT_ITERATIONS = 2000;
+
+// https://regex101.com/r/FAUDYV/7
 const separeAttribution = new RegExp(/^([A-Z]{1})(\s*=\s*)([a-zA-Z].*)$/);
+
+// https://regex101.com/r/B0tbks/1
 const syntaxPattern = new RegExp(
-  /^[A-Z]\s*\=\s*[A-Za-z| ]*[^|.+-/$%#@!*,;'`"\[\]{}^&()=_0-9]$/gm
+  /^[A-Z]\s*\=\s*[A-Za-z| ]*[^|.+-/$%#@!*,;'`"\[\]\\{}^&()=_0-9]$/gm
 );
+
+const logsInitialState = `Passos executados <br/>--------------------- <br/><br/>`;
 
 @Component({
   selector: 'test1',
@@ -26,12 +32,20 @@ export class Test1Component implements OnInit {
 
   gramatic: string;
   form: FormGroup;
-  callStack: string[];
+  callStack: {
+    token: string;
+    index: number;
+    sentence: string;
+  }[];
+  logs = logsInitialState;
+
+  result: string[];
+  stats: { startDate?: Date; endDate?: Date; steps?: number };
 
   // TODO: remover isso
   defaultValue = `S = aaA | bbA|ab
 A = aaB | ab
-B =asd|asda
+B =ab|abba
 C = aaS |c`;
 
   constructor(private fb: FormBuilder, private toastr: MatSnackBar) {
@@ -55,25 +69,106 @@ C = aaS |c`;
     if (this.form.valid) {
       this.handleGramatic(this.form.get('gramatic').value);
       this.deriveSentences(this.form.get('startsWith').value);
+      this.addToLog(
+        `Finalizou a derivação com o resultado: <b>${this.getResultantGramatic()}</b>`
+      );
     } else {
       this.form.markAllAsTouched();
-      this.toastr.open('Formulário inválido, verifique os campos!', 'Fechar', {
-        verticalPosition: 'top',
-        horizontalPosition: 'right',
-        duration: 5000,
-      });
+      this.showToastr('Formulário inválido, verifique os campos!');
     }
   }
 
   deriveSentences(startsOn: string): void {
-    console.log(this.tokens[startsOn].sentences);
-    // console.log(this.sortSentence(this.tokens[startsOn].sentences));
+    const sentences = this.tokens[startsOn].sentences;
+    if (sentences) {
+      this.clearStates();
+      this.stats = { startDate: new Date() };
+
+      this.addToLog(`🚀 Iniciando do token <b>${startsOn}</b>`);
+
+      // sort initial sentence
+      const { sentence, index } = this.sortSentence(sentences);
+      this.callStack.push({
+        token: startsOn,
+        sentence,
+        index,
+      });
+
+      this.addToLog(
+        `Sorteada sentença ${
+          index + 1
+        } do token ${startsOn}: <b>${sentence}</b>`
+      );
+
+      // instantiate a stack based on start sentence tokens
+      const sentenceTokens = Array.from(sentence);
+      if (sentenceTokens.length > 0) {
+        sentenceTokens.forEach((token) => this.internalStack.push(token));
+      }
+
+      // call recursive method
+      this.executeInternalStack();
+    } else {
+      this.showToastr('Erro ao processar gramática');
+    }
   }
 
-  sortSentence(sentences: string[]): string {
+  executeInternalStack() {
+    let iteration = 0;
+    while (this.internalStack.length !== 0) {
+      if (iteration < LIMIT_ITERATIONS) {
+        const token = this.internalStack[0];
+
+        if (token && token === token.toLocaleLowerCase()) {
+          this.result.push(token);
+          this.internalStack.shift();
+        } else if (token && token === token.toUpperCase()) {
+          this.addToLog(`Encontrado não terminal <b>${token}</b>`);
+          this.addToLog(`Iniciando derivação à partir de <b>${token}</b>`);
+
+          const { sentence, index } = this.sortSentence(
+            this.tokens[token].sentences
+          );
+
+          this.addToLog(
+            `Sorteada sentença ${
+              index + 1
+            } do token ${token}: <b>${sentence}</b>`
+          );
+
+          const sentenceTokens = Array.from(sentence);
+          if (sentenceTokens.length > 0) {
+            sentenceTokens.forEach((token) => this.internalStack.push(token));
+          }
+          this.callStack.push({ token, index, sentence });
+          this.internalStack.shift();
+
+          // call recursive
+          this.executeInternalStack();
+        }
+      } else {
+        this.internalStack = [];
+        console.error(`Iterations limit of ${LIMIT_ITERATIONS} exceeded!`);
+      }
+
+      iteration++;
+    }
+
+    this.stats = {
+      ...this.stats,
+      endDate: new Date(),
+      steps: iteration - 1,
+    };
+  }
+
+  getResultantGramatic(): string {
+    return this.result.join('');
+  }
+
+  sortSentence(sentences: string[]): { index: number; sentence: string } {
     const length = sentences.length;
     const sort = Math.floor(Math.random() * length);
-    return sentences[sort];
+    return { index: sort, sentence: sentences[sort] };
   }
 
   splitLines(gramatic: string): string[] {
@@ -154,8 +249,40 @@ C = aaS |c`;
     return sentences.map((el) => el.replace(/\s/g, ''));
   }
 
+  clearStates(): void {
+    this.logs = logsInitialState;
+    this.stats = {};
+    this.internalStack = [];
+    this.result = [];
+    this.callStack = [];
+  }
+
   clearTokens(): void {
     this.tokens = {};
+  }
+
+  showToastr(message: string): void {
+    this.toastr.open(message, 'Fechar', {
+      verticalPosition: 'top',
+      horizontalPosition: 'right',
+      duration: 5000,
+    });
+  }
+
+  addToLog(text: string): void {
+    this.logs += `
+    <div style="width: 100%; display: flex; flex-direction: row;">
+      🕑 ${new Date().toLocaleString('pt-BR')}
+      <span style="width: 100px">&nbsp;</span>
+      <span>${text}</span>
+    </div>
+    `;
+  }
+
+  getExecutionDuration(): number {
+    if (this.stats.startDate && this.stats.endDate)
+      return Math.abs(<any>this.stats.endDate - <any>this.stats.startDate);
+    return 0;
   }
 }
 

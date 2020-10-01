@@ -11,6 +11,9 @@ import { Test1Component } from './test1/test1.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [AppComponent, Test1Component],
@@ -20,6 +23,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     BrowserAnimationsModule,
     MatInputModule,
     MatButtonModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatGridListModule,
     MatIconModule,
     MatSelectModule,
     MatSnackBarModule,

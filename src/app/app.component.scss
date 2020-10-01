@@ -2,9 +2,15 @@
   flex: 1 1 auto;
 }
 
-.wrapper {
-  margin: 15px;
+::ng-deep {
+  mat-toolbar {
+    padding: 0 35px !important;
+  }
+}
+
+#wrapper {
+  margin: 25px;
   padding: 25px;
-  background: #ffffff;
-  border: 1px solid #d9d9d9;
+  box-sizing: border-box;
+  min-height: calc(100vh - 114px);
 }

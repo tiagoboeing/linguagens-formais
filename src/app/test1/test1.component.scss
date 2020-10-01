@@ -1,3 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap");
+
+.headers-align .mat-expansion-panel-header-title,
+.headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
 header {
   display: flex;
   flex-direction: row;
@@ -5,12 +12,45 @@ header {
   justify-content: space-between;
 }
 
-textarea {
-  font-size: 1.2rem;
-  line-height: 1.6rem;
+.row {
+  display: flex;
+  flex-direction: row;
+
+  div {
+    width: 100%;
+  }
 }
 
-#gramatic,
+.w-100 {
+  width: 100%;
+}
+
 #output {
   margin-top: 25px;
+
+  .result {
+    margin: 35px 0;
+    font-size: 40px;
+  }
+
+  .logs {
+    font-family: "Fira Code", monospace;
+    font-size: 1rem;
+    min-height: 150px;
+    max-height: 300px;
+    overflow: auto;
+    background: #f9f9f9;
+    padding: 25px;
+    box-sizing: border-box;
+    line-height: 1.4rem;
+  }
+}
+
+#gramatic {
+  margin-top: 25px;
+
+  textarea {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+  }
 }
