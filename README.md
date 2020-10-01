@@ -6,6 +6,8 @@ Este é um repositório relacionado a práticas acadêmicas.
 
 > [Demonstração](https://tiagoboeing.github.io/linguagens-formais/#/)
 
+> Esta aplicação não resolve gramáticas sensíveis ao contexto
+
 [![](docs/screenshot.png)](https://tiagoboeing.github.io/linguagens-formais/#/)
 
 Implementação da derivação de uma gramática a ser especificada eliminando os símbolos não terminais com a utilização de algoritmos de pilha. Neste cenário, os vetores do JavaScript com auxílio dos métodos `push()` e `shift()`.
